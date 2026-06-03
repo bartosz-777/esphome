@@ -1,0 +1,86 @@
+# ESPHome WS2811 PWM Expander Component - Example Configuration
+
+esphome:
+  name: ws2811-pwm-demo
+  platform: esp32
+  board: esp32dev
+
+# ===== PWM MODE EXAMPLE =====
+# Use WS2811 chips as PWM expanders (each chip = 3 independent white LED outputs)
+# This allows you to connect 3 white LEDs and control each independently
+# 
+# Channel IDs:
+# - Chip 0: channels 0, 1, 2 (R, G, B can each drive a white LED)
+# - Chip 1: channels 3, 4, 5
+# - Chip 2: channels 6, 7, 8
+# etc.
+
+light:
+  # Configure the WS2811 Hub (PWM mode)
+  - platform: neopixel_hub
+    id: ws2811_hub
+    num_chips: 1
+    pin: GPIO5
+    mode: pwm_channels  # Use as PWM expander
+
+  # Individual white LED 1 (connected to Chip 0, Red channel)
+  - platform: neopixel_hub/light
+    name: "White LED 1"
+    hub_id: ws2811_hub
+    channel_id: 0
+    brightness: 100%
+
+  # Individual white LED 2 (connected to Chip 0, Green channel)
+  - platform: neopixel_hub/light
+    name: "White LED 2"
+    hub_id: ws2811_hub
+    channel_id: 1
+    brightness: 100%
+
+  # Individual white LED 3 (connected to Chip 0, Blue channel)
+  - platform: neopixel_hub/light
+    name: "White LED 3"
+    hub_id: ws2811_hub
+    channel_id: 2
+    brightness: 100%
+
+# ===== MULTIPLE CHIPS EXAMPLE =====
+# If you have multiple WS2811 chips chained:
+# light:
+#   - platform: neopixel_hub
+#     id: ws2811_hub_multi
+#     num_chips: 3  # 3 chips = 9 PWM channels total
+#     pin: GPIO5
+#     mode: pwm_channels
+#
+#   # Chip 0
+#   - platform: neopixel_hub/light
+#     name: "LED 1A"
+#     hub_id: ws2811_hub_multi
+#     channel_id: 0
+#
+#   - platform: neopixel_hub/light
+#     name: "LED 1B"
+#     hub_id: ws2811_hub_multi
+#     channel_id: 1
+#
+#   - platform: neopixel_hub/light
+#     name: "LED 1C"
+#     hub_id: ws2811_hub_multi
+#     channel_id: 2
+#
+#   # Chip 1
+#   - platform: neopixel_hub/light
+#     name: "LED 2A"
+#     hub_id: ws2811_hub_multi
+#     channel_id: 3
+#
+#   # ... etc
+
+# Optional: API for Home Assistant integration
+# api:
+#   password: !secret api_password
+
+# ota:
+#   password: !secret ota_password
+
