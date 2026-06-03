@@ -25,7 +25,7 @@ MODE_PWM_CHANNELS = "pwm_channels"  # Use as PWM expander (each chip = 3 PWM out
 ws2811_expander_ns = cg.esphome_ns.namespace("ws2811_expander")
 WS2811Hub = ws2811_expander_ns.class_("WS2811Hub", cg.Component)
 WS2811PWMOutput = ws2811_expander_ns.class_("WS2811PWMOutput", output.FloatOutput)
-WS2811Light = ws2811_expander_ns.class_("WS2811Light", light.Light, cg.Component)
+WS2811Light = ws2811_expander_ns.class_("WS2811Light", light.LightOutput)
 
 # Hub Configuration Schema
 HUB_SCHEMA = cv.Schema(
@@ -37,25 +37,10 @@ HUB_SCHEMA = cv.Schema(
             MODE_RGB_PIXELS, MODE_PWM_CHANNELS, lower=True
         ),
     }
-)
-
-# PWM Channel Output Schema
-PWM_OUTPUT_SCHEMA = output.FLOAT_OUTPUT_SCHEMA.extend(
-    {
-        cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(WS2811PWMOutput),
-        cv.GenerateID("hub_id"): cv.use_id(WS2811Hub),
-        cv.Required(CONF_CHANNEL_ID): cv.positive_int,
-    }
 ).extend(cv.COMPONENT_SCHEMA)
 
-# Light Component Schema (PWM-based white light for each channel)
-LIGHT_SCHEMA = light.LIGHT_SCHEMA.extend(
-    {
-        cv.GenerateID(CONF_OUTPUT_ID): cv.declare_id(WS2811Light),
-        cv.GenerateID("hub_id"): cv.use_id(WS2811Hub),
-        cv.Required(CONF_CHANNEL_ID): cv.positive_int,
-    }
-).extend(cv.COMPONENT_SCHEMA)
+
+CONFIG_SCHEMA = HUB_SCHEMA
 
 
 async def to_code(config):
@@ -69,9 +54,9 @@ async def to_code(config):
 
     mode = config[CONF_MODE]
     if mode == MODE_PWM_CHANNELS:
-        cg.add(var.set_mode(ws2811_expander_ns.WS2811Mode.PWM_CHANNELS))
+        cg.add(var.set_mode("PWM_CHANNELS"))
     else:
-        cg.add(var.set_mode(ws2811_expander_ns.WS2811Mode.RGB_PIXELS))
+        cg.add(var.set_mode("RGB_PIXELS"))
 
     # Add NeoPixelBus library
     if CORE.is_esp32:

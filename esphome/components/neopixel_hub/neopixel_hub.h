@@ -26,7 +26,9 @@ class WS2811Hub : public Component {
 
   void set_num_chips(uint8_t num_chips) { this->num_chips_ = num_chips; }
   void set_data_pin(uint8_t pin) { this->data_pin_ = pin; }
-  void set_mode(WS2811Mode mode) { this->mode_ = mode; }
+  void set_mode(const std::string &mode_str) {
+    this->mode_ = (mode_str == "PWM_CHANNELS") ? WS2811Mode::PWM_CHANNELS : WS2811Mode::RGB_PIXELS;
+  }
 
   // PWM mode: set channel value (0-255)
   // Channel format: chip_id * 3 + color_offset
@@ -53,13 +55,11 @@ class WS2811Hub : public Component {
   bool needs_update_{true};
 };
 
-class WS2811Light : public light::Light, public Component {
+class WS2811Light : public light::LightOutput {
  public:
   WS2811Light(WS2811Hub *hub, uint16_t channel_id)
       : hub_(hub), channel_id_(channel_id) {}
 
-  void setup() override;
-  void dump_config() override;
   light::LightTraits get_traits() const override;
 
  protected:

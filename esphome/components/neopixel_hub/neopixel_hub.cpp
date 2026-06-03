@@ -88,10 +88,6 @@ void WS2811Hub::set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint
   this->needs_update_ = true;
 }
 
-void WS2811Light::setup() {
-  ESP_LOGCONFIG(TAG, "WS2811 Light Channel %u", this->channel_id_);
-}
-
 void WS2811Light::dump_config() {
   ESP_LOGI(TAG, "WS2811 Light Channel #%u", this->channel_id_);
 }
