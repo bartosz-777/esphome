@@ -4,11 +4,11 @@
 #include <cstring>
 
 namespace esphome {
-namespace ws2811_expander {
+namespace neopixel_hub {
 
-static const char *const TAG = "ws2811_expander";
+static const char *const TAG = "neopixel_hub";
 
-void WS2811Hub::setup() {
+void NeoPixelHub::setup() {
   uint16_t total_channels = this->get_total_channels();
   
   ESP_LOGCONFIG(TAG, "Setting up WS2811 Hub:");
@@ -35,21 +35,21 @@ void WS2811Hub::setup() {
   }
 }
 
-void WS2811Hub::dump_config() {
+void NeoPixelHub::dump_config() {
   ESP_LOGCONFIG(TAG, "WS2811 Hub:");
   ESP_LOGCONFIG(TAG, "  Mode: %s", this->mode_ == WS2811Mode::PWM_CHANNELS ? "PWM_CHANNELS" : "RGB_PIXELS");
   ESP_LOGCONFIG(TAG, "  Chips: %u", this->num_chips_);
   ESP_LOGCONFIG(TAG, "  Data Pin: GPIO%u", this->data_pin_);
 }
 
-void WS2811Hub::loop() {
+void NeoPixelHub::loop() {
   if (this->needs_update_ && this->bus_) {
     this->bus_->Show();
     this->needs_update_ = false;
   }
 }
 
-void WS2811Hub::set_channel_value(uint16_t channel_id, uint8_t value) {
+void NeoPixelHub::set_channel_value(uint16_t channel_id, uint8_t value) {
   if (channel_id >= this->pwm_values_.size()) {
     ESP_LOGW(TAG, "Channel ID %u out of range (max %zu)", channel_id, this->pwm_values_.size() - 1);
     return;
@@ -74,7 +74,7 @@ void WS2811Hub::set_channel_value(uint16_t channel_id, uint8_t value) {
   this->needs_update_ = true;
 }
 
-void WS2811Hub::set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint8_t b) {
+void NeoPixelHub::set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint8_t b) {
   if (pixel_index >= this->num_chips_) {
     ESP_LOGW(TAG, "Pixel index %u out of range (max %u)", pixel_index, this->num_chips_ - 1);
     return;
@@ -88,33 +88,7 @@ void WS2811Hub::set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint
   this->needs_update_ = true;
 }
 
-void WS2811Light::dump_config() {
-  ESP_LOGI(TAG, "WS2811 Light Channel #%u", this->channel_id_);
-}
 
-light::LightTraits WS2811Light::get_traits() const {
-  auto traits = light::LightTraits();
-  traits.set_supports_brightness(true);
-  traits.set_supports_rgb(false);  // PWM channels are white-only
-  traits.set_supports_color_temperature(false);
-  traits.set_supports_white_value(true);
-  return traits;
-}
-
-void WS2811Light::write_state(const light::LightState *state) {
-  float brightness = state->get_brightness();
-  bool on = state->is_on();
-  
-  if (!on) {
-    // Turn off channel
-    this->hub_->set_channel_value(this->channel_id_, 0);
-  } else {
-    // Get brightness (0.0 - 1.0) and scale to 0-255
-    uint8_t pwm_value = static_cast<uint8_t>(brightness * 255.0f);
-    this->hub_->set_channel_value(this->channel_id_, pwm_value);
-  }
-}
-
-}  // namespace ws2811_expander
+}  // namespace neopixel_hub
 }  // namespace esphome
 

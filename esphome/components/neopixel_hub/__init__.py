@@ -22,15 +22,14 @@ CONF_MODE = "mode"
 MODE_RGB_PIXELS = "rgb_pixels"  # Traditional addressable RGB LEDs
 MODE_PWM_CHANNELS = "pwm_channels"  # Use as PWM expander (each chip = 3 PWM outputs)
 
-ws2811_expander_ns = cg.esphome_ns.namespace("ws2811_expander")
-WS2811Hub = ws2811_expander_ns.class_("WS2811Hub", cg.Component)
-WS2811PWMOutput = ws2811_expander_ns.class_("WS2811PWMOutput", output.FloatOutput)
-WS2811Light = ws2811_expander_ns.class_("WS2811Light", light.LightOutput)
+neopixel_hub_ns = cg.esphome_ns.namespace("neopixel_hub")
+NeoPixelHub = neopixel_hub_ns.class_("NeoPixelHub", cg.Component)
+NeoPixelChannel = neopixel_hub_ns.class_("NeoPixelHub::Channel", output.FloatOutput)
 
 # Hub Configuration Schema
 HUB_SCHEMA = cv.Schema(
     {
-        cv.GenerateID(): cv.declare_id(WS2811Hub),
+        cv.GenerateID(): cv.declare_id(NeoPixelHub),
         cv.Required(CONF_PIN): pins.internal_gpio_output_pin_number,
         cv.Required(CONF_NUM_CHIPS): cv.positive_not_null_int,
         cv.Optional(CONF_MODE, default=MODE_PWM_CHANNELS): cv.one_of(

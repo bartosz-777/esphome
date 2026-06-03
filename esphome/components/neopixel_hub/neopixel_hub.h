@@ -9,16 +9,17 @@
 #include <array>
 
 namespace esphome {
-namespace ws2811_expander {
+namespace neopixel_hub {
 
 enum class WS2811Mode {
   RGB_PIXELS,      // Treat as addressable RGB LEDs
   PWM_CHANNELS,    // Treat each chip as 3 independent PWM outputs (R, G, B)
 };
 
-class WS2811Hub : public Component {
+class NeoPixelHub : public Component {
  public:
-  WS2811Hub() = default;
+  class Channel;
+  NeoPixelHub() = default;
 
   void setup() override;
   void dump_config() override;
@@ -31,8 +32,6 @@ class WS2811Hub : public Component {
   }
 
   // PWM mode: set channel value (0-255)
-  // Channel format: chip_id * 3 + color_offset
-  // Where color_offset: 0=R, 1=G, 2=B
   void set_channel_value(uint16_t channel_id, uint8_t value);
   
   // RGB pixel mode: set pixel color
@@ -55,19 +54,33 @@ class WS2811Hub : public Component {
   bool needs_update_{true};
 };
 
-class WS2811Light : public light::LightOutput {
+class NeoPixelHub::Channel : public output::FloatOutput {
  public:
-  WS2811Light(WS2811Hub *hub, uint16_t channel_id)
-      : hub_(hub), channel_id_(channel_id) {}
-
-  light::LightTraits get_traits() const override;
+  void set_parent(NeoPixelHub *hub) { hub_ = hub; }
+  void set_channel_id(uint16_t channel_id) { channel_id_ = channel_id; }
 
  protected:
-  void write_state(const light::LightState *state) override;
+  void write_state(float state) override {
+    auto amount = static_cast<uint8_t>(state * 255);
+    this->hub_->set_channel_value(channel_id_, amount);
+  }
 
-  WS2811Hub *hub_;
+  NeoPixelHub *hub_;
   uint16_t channel_id_{0};
 };
 
-}  // namespace ws2811_expander
+}  // namespace neopixel_hub
+}  // namespace esphome
+    void set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint8_t b);
+
+    GPIOPin *data_pin_;
+    uint8_t num_chips_;
+    WS2811Mode mode_;
+    std::vector<uint8_t> pwm_values_;
+    std::unique_ptr<NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod>> bus_;
+    bool needs_update_;
+
+};
+
+}  // namespace neopixel_hub
 }  // namespace esphome

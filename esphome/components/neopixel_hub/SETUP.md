@@ -183,7 +183,7 @@ light:
 
 ## ✨ Features Verified
 
-- ✅ Proper namespace (`ws2811_expander`)
+- ✅ Proper namespace (`neopixel_hub`)
 - ✅ C++ header guards
 - ✅ Component registration
 - ✅ Light registration
