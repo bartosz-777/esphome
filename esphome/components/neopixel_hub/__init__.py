@@ -22,7 +22,7 @@ CONF_MODE = "mode"
 MODE_RGB_PIXELS = "rgb_pixels"  # Traditional addressable RGB LEDs
 MODE_PWM_CHANNELS = "pwm_channels"  # Use as PWM expander (each chip = 3 PWM outputs)
 
-neopixel_hub_ns = cg.esphome_ns.namespace("neopixel_hub")
+neopixel_hub_ns = cg.esphome_ns.namespace("NeoPixelHub")
 NeoPixelHub = neopixel_hub_ns.class_("NeoPixelHub", cg.Component)
 NeoPixelChannel = neopixel_hub_ns.class_("NeoPixelHub::Channel", output.FloatOutput)
 
