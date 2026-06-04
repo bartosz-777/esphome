@@ -1,4 +1,4 @@
-#include "NeoPixelHub.h"
+#include "neopixel_hub.h"
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 #include <cstring>
