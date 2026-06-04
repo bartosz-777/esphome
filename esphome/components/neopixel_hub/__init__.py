@@ -1,36 +1,31 @@
-"""ESPHome WS2811 PWM Expander Component - Uses WS2811 chips as PWM controllers."""
+"""ESPHome NeoPixel Hub Component - Uses WS2811 chips as PWM controllers."""
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome import pins
-from esphome.components import light, output
+from esphome.components import output
 from esphome.const import (
-    CONF_CHANNEL,
     CONF_ID,
     CONF_OUTPUT_ID,
     CONF_PIN,
-    Framework,
 )
 from esphome.core import CORE
-
-MULTI_CONF = True
 
 # Constants
 CONF_NUM_CHIPS = "num_chips"
 CONF_CHANNEL_ID = "channel_id"
-CONF_PWM_EXPANDER = "pwm_expander"
 CONF_MODE = "mode"
 
 # Modes for operation
-MODE_RGB_PIXELS = "rgb_pixels"  # Traditional addressable RGB LEDs
-MODE_PWM_CHANNELS = "pwm_channels"  # Use as PWM expander (each chip = 3 PWM outputs)
+MODE_RGB_PIXELS = "rgb_pixels"
+MODE_PWM_CHANNELS = "pwm_channels"
 
-AUTO_LOAD = ["output"]
-neopixel_hub_ns = cg.esphome_ns.namespace("NeoPixelHub")
+# Use lowercase namespace
+neopixel_hub_ns = cg.esphome_ns.namespace("neopixel_hub")
 NeoPixelHub = neopixel_hub_ns.class_("NeoPixelHub", cg.Component)
 NeoPixelChannel = neopixel_hub_ns.class_("NeoPixelHub::Channel", output.FloatOutput)
 
-# Hub Configuration Schema
-HUB_SCHEMA = cv.Schema(
+# Hub Configuration Schema (for neopixel_hub platform)
+CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(NeoPixelHub),
         cv.Required(CONF_PIN): pins.gpio_output_pin_schema,
@@ -40,9 +35,6 @@ HUB_SCHEMA = cv.Schema(
         ),
     }
 ).extend(cv.COMPONENT_SCHEMA)
-
-
-CONFIG_SCHEMA = HUB_SCHEMA
 
 
 async def to_code(config):
