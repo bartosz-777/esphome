@@ -1,13 +1,10 @@
 #pragma once
 
 #include "esphome/core/component.h"
-#include "esphome/components/light/light_output.h"
-#include "esphome/core/hal.h"
 #include "esphome/components/output/float_output.h"
 #include <NeoPixelBus.h>
 #include <memory>
 #include <vector>
-#include <array>
 
 namespace esphome {
 namespace neopixel_hub {
@@ -17,10 +14,11 @@ enum class WS2811Mode {
   PWM_CHANNELS,    // Treat each chip as 3 independent PWM outputs (R, G, B)
 };
 
-class neopixel_hub : public Component {
+class NeoPixelHub : public Component {
  public:
   class Channel;
-  neopixel_hub() = default;
+  
+  NeoPixelHub() = default;
 
   void setup() override;
   void dump_config() override;
@@ -53,31 +51,22 @@ class neopixel_hub : public Component {
   std::unique_ptr<NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod>> bus_;
   
   bool needs_update_{true};
+};
 
-class Channel : public output::FloatOutput {
+// Nested Channel class for individual PWM output control
+class NeoPixelHub::Channel : public output::FloatOutput {
  public:
-  void set_parent(neopixel_hub *hub) { hub_ = hub; }
-  void set_channel(uint16_t channel) { channel_id_ = channel; }
+  void set_parent(NeoPixelHub *hub) { this->hub_ = hub; }
+  void set_channel_id(uint16_t channel_id) { this->channel_id_ = channel_id; }
 
  protected:
   void write_state(float state) override {
-    auto amount = static_cast<uint8_t>(state * 255);
-    this->hub_->set_channel_value(channel_id_, amount);
+    auto amount = static_cast<uint8_t>(state * 255.0f);
+    this->hub_->set_channel_value(this->channel_id_, amount);
   }
 
-  neopixel_hub *hub_;
-  uint16_t channel_id_;
-};
-
-    void set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint8_t b);
-
-    GPIOPin *data_pin_;
-    uint8_t num_chips_;
-    WS2811Mode mode_;
-    std::vector<uint8_t> pwm_values_;
-    std::unique_ptr<NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod>> bus_;
-    bool needs_update_;
-
+  NeoPixelHub *hub_{nullptr};
+  uint16_t channel_id_{0};
 };
 
 }  // namespace neopixel_hub

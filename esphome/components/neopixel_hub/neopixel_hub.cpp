@@ -8,7 +8,7 @@ namespace neopixel_hub {
 
 static const char *const TAG = "NeoPixelHub";
 
-void neopixel_hub::setup() {
+void NeoPixelHub::setup() {
   uint16_t total_channels = this->get_total_channels();
   
   // Initialize PWM buffer
@@ -29,21 +29,21 @@ void neopixel_hub::setup() {
   }
 }
 
-void neopixel_hub::dump_config() {
+void NeoPixelHub::dump_config() {
   ESP_LOGCONFIG(TAG, "WS2811 Hub:");
   ESP_LOGCONFIG(TAG, "  Mode: %s", this->mode_ == WS2811Mode::PWM_CHANNELS ? "PWM_CHANNELS" : "RGB_PIXELS");
   ESP_LOGCONFIG(TAG, "  Chips: %u", this->num_chips_);
   ESP_LOGCONFIG(TAG, "  Data Pin: GPIO%u", this->data_pin_);
 }
 
-void neopixel_hub::loop() {
+void NeoPixelHub::loop() {
   if (this->needs_update_ && this->bus_) {
     this->bus_->Show();
     this->needs_update_ = false;
   }
 }
 
-void neopixel_hub::set_channel_value(uint16_t channel_id, uint8_t value) {
+void NeoPixelHub::set_channel_value(uint16_t channel_id, uint8_t value) {
   if (channel_id >= this->pwm_values_.size()) {
     ESP_LOGW(TAG, "Channel ID %u out of range (max %zu)", channel_id, this->pwm_values_.size() - 1);
     return;
@@ -68,7 +68,7 @@ void neopixel_hub::set_channel_value(uint16_t channel_id, uint8_t value) {
   this->needs_update_ = true;
 }
 
-void neopixel_hub::set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint8_t b) {
+void NeoPixelHub::set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint8_t b) {
   if (pixel_index >= this->num_chips_) {
     ESP_LOGW(TAG, "Pixel index %u out of range (max %u)", pixel_index, this->num_chips_ - 1);
     return;
