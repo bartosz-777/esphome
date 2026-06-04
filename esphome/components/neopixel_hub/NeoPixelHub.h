@@ -10,17 +10,17 @@
 #include <array>
 
 namespace esphome {
-namespace NeoPixelHub {
+namespace neopixel_hub {
 
 enum class WS2811Mode {
   RGB_PIXELS,      // Treat as addressable RGB LEDs
   PWM_CHANNELS,    // Treat each chip as 3 independent PWM outputs (R, G, B)
 };
 
-class NeoPixelHub : public Component {
+class neopixel_hub : public Component {
  public:
   class Channel;
-  NeoPixelHub() = default;
+  neopixel_hub() = default;
 
   void setup() override;
   void dump_config() override;
@@ -56,7 +56,7 @@ class NeoPixelHub : public Component {
 
 class Channel : public output::FloatOutput {
  public:
-  void set_parent(NeoPixelHub *hub) { hub_ = hub; }
+  void set_parent(neopixel_hub *hub) { hub_ = hub; }
   void set_channel(uint16_t channel) { channel_id_ = channel; }
 
  protected:
@@ -65,7 +65,7 @@ class Channel : public output::FloatOutput {
     this->hub_->set_channel_value(channel_id_, amount);
   }
 
-  NeoPixelHub *hub_;
+  neopixel_hub *hub_;
   uint16_t channel_id_;
 };
 
@@ -80,5 +80,5 @@ class Channel : public output::FloatOutput {
 
 };
 
-}  // namespace NeoPixelHub
+}  // namespace neopixel_hub
 }  // namespace esphome
