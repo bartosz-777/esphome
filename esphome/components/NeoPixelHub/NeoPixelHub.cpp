@@ -1,21 +1,15 @@
-#include "neopixel_hub.h"
+#include "NeoPixelHub.h"
 #include "esphome/core/log.h"
 #include "esphome/core/helpers.h"
 #include <cstring>
 
 namespace esphome {
-namespace neopixel_hub {
+namespace NeoPixelHub {
 
-static const char *const TAG = "neopixel_hub";
+static const char *const TAG = "NeoPixelHub";
 
 void NeoPixelHub::setup() {
   uint16_t total_channels = this->get_total_channels();
-  
-  ESP_LOGCONFIG(TAG, "Setting up WS2811 Hub:");
-  ESP_LOGCONFIG(TAG, "  Mode: %s", this->mode_ == WS2811Mode::PWM_CHANNELS ? "PWM_CHANNELS" : "RGB_PIXELS");
-  ESP_LOGCONFIG(TAG, "  Chips: %u", this->num_chips_);
-  ESP_LOGCONFIG(TAG, "  Total Channels: %u", total_channels);
-  ESP_LOGCONFIG(TAG, "  Data Pin: GPIO%u", this->data_pin_);
   
   // Initialize PWM buffer
   this->pwm_values_.resize(total_channels, 0);
@@ -89,6 +83,6 @@ void NeoPixelHub::set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, ui
 }
 
 
-}  // namespace neopixel_hub
+}  // namespace NeoPixelHub
 }  // namespace esphome
 

@@ -2,6 +2,7 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/light/light_output.h"
+#include "esphome/core/hal.h"
 #include "esphome/components/output/float_output.h"
 #include <NeoPixelBus.h>
 #include <memory>
@@ -9,7 +10,7 @@
 #include <array>
 
 namespace esphome {
-namespace neopixel_hub {
+namespace NeoPixelHub {
 
 enum class WS2811Mode {
   RGB_PIXELS,      // Treat as addressable RGB LEDs
@@ -52,12 +53,11 @@ class NeoPixelHub : public Component {
   std::unique_ptr<NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod>> bus_;
   
   bool needs_update_{true};
-};
 
-class NeoPixelHub::Channel : public output::FloatOutput {
+class Channel : public output::FloatOutput {
  public:
   void set_parent(NeoPixelHub *hub) { hub_ = hub; }
-  void set_channel_id(uint16_t channel_id) { channel_id_ = channel_id; }
+  void set_channel(uint16_t channel) { channel_id_ = channel; }
 
  protected:
   void write_state(float state) override {
@@ -66,11 +66,9 @@ class NeoPixelHub::Channel : public output::FloatOutput {
   }
 
   NeoPixelHub *hub_;
-  uint16_t channel_id_{0};
+  uint16_t channel_id_;
 };
 
-}  // namespace neopixel_hub
-}  // namespace esphome
     void set_pixel_color(uint16_t pixel_index, uint8_t r, uint8_t g, uint8_t b);
 
     GPIOPin *data_pin_;
@@ -82,5 +80,5 @@ class NeoPixelHub::Channel : public output::FloatOutput {
 
 };
 
-}  // namespace neopixel_hub
+}  // namespace NeoPixelHub
 }  // namespace esphome
