@@ -12,6 +12,8 @@ from esphome.const import (
 )
 from esphome.core import CORE
 
+MULTI_CONF = True
+
 # Constants
 CONF_NUM_CHIPS = "num_chips"
 CONF_CHANNEL_ID = "channel_id"
@@ -22,6 +24,7 @@ CONF_MODE = "mode"
 MODE_RGB_PIXELS = "rgb_pixels"  # Traditional addressable RGB LEDs
 MODE_PWM_CHANNELS = "pwm_channels"  # Use as PWM expander (each chip = 3 PWM outputs)
 
+AUTO_LOAD = ["output"]
 neopixel_hub_ns = cg.esphome_ns.namespace("NeoPixelHub")
 NeoPixelHub = neopixel_hub_ns.class_("NeoPixelHub", cg.Component)
 NeoPixelChannel = neopixel_hub_ns.class_("NeoPixelHub::Channel", output.FloatOutput)
@@ -30,8 +33,8 @@ NeoPixelChannel = neopixel_hub_ns.class_("NeoPixelHub::Channel", output.FloatOut
 HUB_SCHEMA = cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(NeoPixelHub),
-        cv.Required(CONF_PIN): pins.internal_gpio_output_pin_number,
-        cv.Required(CONF_NUM_CHIPS): cv.positive_not_null_int,
+        cv.Required(CONF_PIN): pins.gpio_output_pin_schema,
+        cv.Required(CONF_NUM_CHIPS): cv.int_range(min=1, max=15),
         cv.Optional(CONF_MODE, default=MODE_PWM_CHANNELS): cv.one_of(
             MODE_RGB_PIXELS, MODE_PWM_CHANNELS, lower=True
         ),
