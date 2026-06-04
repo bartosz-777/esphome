@@ -21,8 +21,8 @@ MODE_PWM_CHANNELS = "pwm_channels"
 
 # Use lowercase namespace
 neopixel_hub_ns = cg.esphome_ns.namespace("neopixel_hub")
-NeoPixelHub = neopixel_hub_ns.class_("NeoPixelHub", cg.Component)
-NeoPixelChannel = neopixel_hub_ns.class_("NeoPixelHub::Channel", output.FloatOutput)
+NeoPixelHub = neopixel_hub_ns.class_("neopixel_hub", cg.Component)
+NeoPixelChannel = neopixel_hub_ns.class_("neopixel_hub::Channel", output.FloatOutput)
 
 # Hub Configuration Schema (for neopixel_hub platform)
 CONFIG_SCHEMA = cv.Schema(
