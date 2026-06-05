@@ -1,0 +1,8 @@
+# ESPHome component manifest
+documentation: https://github.com/esphome/esphome/tree/dev/esphome/components/neopixel_hub
+dependencies:
+  - output
+  - light
+codeowners:
+  - '@bartoszlew'
+version: 1.0.0
